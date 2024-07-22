@@ -1,0 +1,30 @@
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:8.0.30
+    env_file:
+      - ./mysql.env
+    volumes:
+      - ./volumes/mysql:/var/lib/mysql
+      - ./sql/init-nacos.sql:/docker-entrypoint-initdb.d/init-nacos.sql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+  nacos:
+    image: nacos/nacos-server:v2.2.3
+    container_name: nacos
+    env_file:
+      - ./nacos.env
+    volumes:
+      - ./volumes/nacos_logs:/home/nacos/logs
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: always
