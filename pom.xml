@@ -16,6 +16,7 @@
         <module>provider</module>
         <module>order</module>
         <module>config</module>
+        <module>sentinel-service</module>
     </modules>
     <name>spring-cloud-demo</name>
     <description>学习Spring Cloud的Demo</description>

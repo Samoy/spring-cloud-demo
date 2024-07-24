@@ -30,3 +30,16 @@ services:
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8848/nacos/actuator/health" ]
     restart: always
+  redis:
+    image: redis:7.0.8
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./volumes/redis:/data
+  sentinel:
+    image: bladex/sentinel-dashboard:1.8.7
+    container_name: sentinel
+    ports:
+      - "8858:8858"
+      - "8719:8719"
