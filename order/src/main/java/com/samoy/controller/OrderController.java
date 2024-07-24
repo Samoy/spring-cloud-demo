@@ -18,11 +18,11 @@ public class OrderController {
     @Resource
     private RestTemplate restTemplate;
     @Value("${service-url.nacos-user-service}")
-    private String serviceURL;
+    private String serviceUrl;
 
     @GetMapping("/consumer/pay/nacos/{id}")
     public String paymentInfo(@PathVariable("id") Integer id) {
-        String result = restTemplate.getForObject(serviceURL + "/pay/nacos/" + id, String.class);
+        String result = restTemplate.getForObject(serviceUrl + "/pay/nacos/" + id, String.class);
         return result + "\t 我是OrderController调用者...";
     }
 }
