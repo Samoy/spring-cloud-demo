@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * RateLimitController
@@ -48,5 +49,23 @@ public class RateLimitController {
     public String doActionFallback(Integer p1, Throwable throwable) {
         log.error("程序逻辑异常了：{}", throwable.getMessage());
         return "程序逻辑异常了" + "\t" + throwable.getMessage();
+    }
+
+    /**
+     * 热点参数限流
+     *
+     * @param p1 参数1
+     * @param p2 参数2
+     * @return String
+     */
+    @GetMapping("/testHotKey")
+    @SentinelResource(value = "testHotKey", blockHandler = "testHotKeyBlockHandler")
+    public String testHotKey(@RequestParam(value = "p1", required = false) String p1,
+                             @RequestParam(value = "p2", required = false) String p2) {
+        return "testHotKey测试OK，O(∩_∩)O哈哈~";
+    }
+
+    public String testHotKeyBlockHandler(String p1, String p2, BlockException blockException) {
+        return "------handler_testHotKey";
     }
 }
