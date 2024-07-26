@@ -1,5 +1,7 @@
 package com.samoy.controller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,5 +21,15 @@ public class PayController {
     @GetMapping(value = "/pay/nacos/{id}")
     public String getPayInfo(@PathVariable("id") String id) {
         return "Nacos registry, serverPort:" + serverPort + "\t id:" + id;
+    }
+
+    @GetMapping(value = "/pay/nacos/get/{orderNo}")
+    @SentinelResource(value = "getPayByOrderNo", blockHandler = "getPayByOrderNoBlockHandler")
+    public String getPayByOrderNo(@PathVariable("orderNo") String orderNo) {
+        return "查询成功, orderNo: " + orderNo;
+    }
+
+    public String getPayByOrderNoBlockHandler(String orderNo, BlockException e) {
+        return "getPayByOrderNo不可用，触发Sentinel流控配置规则, orderNo: " + orderNo + "，原因是：" + e.getLocalizedMessage();
     }
 }

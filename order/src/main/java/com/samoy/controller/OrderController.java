@@ -25,4 +25,13 @@ public class OrderController {
         String result = restTemplate.getForObject(serviceUrl + "/pay/nacos/" + id, String.class);
         return result + "\t 我是OrderController调用者...";
     }
+
+    //===========openfeign=================
+    @Resource
+    private PayFeignSentinelApi payFeignSentinelApi;
+
+    @GetMapping(value = "/consumer/pay/nacos/get/{orderNo}")
+    public String getPayByOrderNo(@PathVariable("orderNo") String orderNo) {
+        return payFeignSentinelApi.getPayByOrderNo(orderNo);
+    }
 }
