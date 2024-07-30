@@ -1,5 +1,10 @@
+networks:
+  my_network:
+    driver: bridge
 services:
   mysql:
+    networks:
+      - my_network
     container_name: mysql
     image: mysql:8.0.30
     env_file:
@@ -15,6 +20,8 @@ services:
       timeout: 10s
       retries: 10
   nacos:
+    networks:
+      - my_network
     image: nacos/nacos-server:v2.2.3
     container_name: nacos
     env_file:
@@ -31,6 +38,8 @@ services:
       test: [ "CMD", "curl", "-f", "http://localhost:8848/nacos/actuator/health" ]
     restart: always
   redis:
+    networks:
+      - my_network
     image: redis:7.0.8
     container_name: redis
     ports:
@@ -38,8 +47,27 @@ services:
     volumes:
       - ./volumes/redis:/data
   sentinel:
+    networks:
+      - my_network
     image: bladex/sentinel-dashboard:1.8.7
     container_name: sentinel
     ports:
       - "8858:8858"
       - "8719:8719"
+  seata:
+    networks:
+      - my_network
+    image: seataio/seata-server:2.0.0
+    container_name: seata-server
+    ports:
+      - "7091:7091"
+      - "8091:8091"
+    depends_on:
+      nacos:
+        condition: service_healthy
+    environment:
+      - SEATA_IP=10.223.101.86
+    volumes:
+      - "./seata/resources:/seata-server/resources"
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/localtime" #设置系统时区
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"  #设置时区
